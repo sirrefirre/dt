@@ -17,7 +17,7 @@
 #include "mipslab.h"  /* Declatations for these labs */
 
 
-int mytime = 0x5957;
+int mytime = 0x5900;
 int timeoutcount = 0;
 int flag = 0;
 
