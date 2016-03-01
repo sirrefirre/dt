@@ -1,2 +1,0 @@
-labwork-surprise.S.o: labwork-surprise.S
-labwork-surprise.S :
