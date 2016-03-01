@@ -49,13 +49,13 @@ int main(void) {
 	SPI2CONSET = 0x8000;
 	
 	display_init();
-	display_string(0, "Hai");
-	display_string(1, "this");
-	display_string(2, "is");
-	display_string(3, "dog");
+	display_string(0, "Welcome to");
+	display_string(1, "mips invaders");
+	display_string(2, "this screen is");
+	display_string(3, "small :(");
 	display_update();
-	
-	display_image(96, icon);
+	delay(5000);
+	//display_image(96, icon);
 	
 	labinit(); /* Do any lab-specific initialization */
 

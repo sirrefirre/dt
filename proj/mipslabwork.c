@@ -77,11 +77,10 @@ void labwork( void )
 	}else{
 		//print on screen once a second
 		timeoutcount = 0;
-		sleep(1);
 		if(!flag++){
 			display_string( 0, "");
 			display_string( 1, "");
-			display_string( 3, "");
+			display_string( 2, "");
 		}else{
 			display_string(0, "top");
 		}
