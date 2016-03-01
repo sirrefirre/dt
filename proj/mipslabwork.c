@@ -10,6 +10,8 @@
 
    For copyright and licensing, see file COPYING */
 
+      //modified by Simon Westin and Yukki Nakamura
+
 #include <stdint.h>   /* Declarations of uint_32 and the like */
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "mipslab.h"  /* Declatations for these labs */
@@ -17,6 +19,7 @@
 
 int mytime = 0x5957;
 int timeoutcount = 0;
+int flag = 0;
 
 
 char textstring[] = "text, more text, and even more text!";
@@ -51,6 +54,7 @@ void labwork( void )
 		TMR2 = 0;
 	if(timeoutcount < 9){
 		timeoutcount++;
+		  /*
 		  int btns = getbtns();
 		  if(btns){
 			int sw = getsw();
@@ -69,15 +73,22 @@ void labwork( void )
 				mytime &= 0xff0f;
 				mytime |= (sw<<4);
 			}
-		  }
+		  }*/
 	}else{
 		//print on screen once a second
 		timeoutcount = 0;
-		time2string( textstring, mytime );
-		display_string( 3, textstring );
+		if(!flag++){
+			display_string( 0, "");
+			display_string( 1, "");
+			display_string( 3, "");
+		}else{
+			display_string(0, "top");
+		}
+		//time2string( textstring, mytime );
+		display_stringright( 3, "kek");
 		display_update();
-		tick( &mytime );
-		display_image(96, icon);
+		//tick( &mytime );
+		//display_image(96, icon);
 		*portE += 1;
 	}
 }

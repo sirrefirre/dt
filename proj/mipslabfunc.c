@@ -3,6 +3,7 @@
    Some parts are original code written by Axel Isaksson
 
    For copyright and licensing, see file COPYING */
+   //modified by Simon Westin and Yukki Nakamura
 
 #include <stdint.h>   /* Declarations of uint_32 and the like */
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
@@ -134,6 +135,20 @@ void display_string(int line, char *s) {
 		return;
 	
 	for(i = 0; i < 16; i++)
+		if(*s) {
+			textbuffer[line][i] = *s;
+			s++;
+		} else
+			textbuffer[line][i] = ' ';
+}
+void display_stringright(int line, char *s) {
+	int i;
+	if(line < 0 || line >= 4)
+		return;
+	if(!s)
+		return;
+	
+	for(i = 15; i >= 0; i--)
 		if(*s) {
 			textbuffer[line][i] = *s;
 			s++;

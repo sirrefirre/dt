@@ -1,3 +1,5 @@
+   //written by Simon Westin and Yukki Nakamura
+
 #include <stdint.h>
 #include <pic32mx.h>
 #include "mipslab.h" 

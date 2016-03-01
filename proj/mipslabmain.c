@@ -7,6 +7,7 @@
 
    For copyright and licensing, see file COPYING */
 
+   //modified by Simon Westin and Yukki Nakamura
 #include <stdint.h>   /* Declarations of uint_32 and the like */
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "mipslab.h"  /* Declatations for these labs */
@@ -48,10 +49,10 @@ int main(void) {
 	SPI2CONSET = 0x8000;
 	
 	display_init();
-	display_string(0, "KTH/ICT lab");
-	display_string(1, "in Computer");
-	display_string(2, "Engineering");
-	display_string(3, "Welcome!");
+	display_string(0, "Hai");
+	display_string(1, "this");
+	display_string(2, "is");
+	display_string(3, "dog");
 	display_update();
 	
 	display_image(96, icon);
