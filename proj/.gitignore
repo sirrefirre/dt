@@ -1,0 +1,11 @@
+.deps/
+labwork.S.o
+mipslabdata.c.o
+mipslabfunc.c.o
+mipslabmain.c.o
+mipslabwork.c.o
+outfile.elf
+outfile.hex
+stubs.c.o
+time4io.c.o
+vectors.S.o
