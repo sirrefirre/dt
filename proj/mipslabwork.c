@@ -77,6 +77,7 @@ void labwork( void )
 	}else{
 		//print on screen once a second
 		timeoutcount = 0;
+		sleep(1);
 		if(!flag++){
 			display_string( 0, "");
 			display_string( 1, "");
