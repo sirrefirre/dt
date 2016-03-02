@@ -1,8 +1,6 @@
 #include <stdint.h>   /* Declarations of uint_32 and the like */
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "include.h"  /* Declatations for these labs */
-volatile int* portE = (int *)0xbf886110;
-volatile int* trisE = (int *)0xbf886100;
 
 void init( void ){
 	/**************** from lab3 main *****************/
@@ -42,10 +40,6 @@ void init( void ){
 	SPI2CONSET = 0x8000;
 	/********************************************************/
 	
-	
-	*trisE &= ~0xff;
-	*portE = 0;
-	TRISD |= 0xfe0;
 	T2CONSET = 0x8070;	//enable timer2 with 1:256
 	PR2 = 31250;		//set counter value
 
@@ -54,8 +48,8 @@ void init( void ){
   return;
 }
 
+//starting screen
 void startscreen(void){
-	//starting screen
 	display_string(0, "   Welcome to");
 	display_string(1, " MIPS INVADERS!");
 	display_string(2, " press button 2");
@@ -63,8 +57,8 @@ void startscreen(void){
 	display_update();
 }
 
+//starting messages
 void startmessages(void){
-	//starting messages
 	display_string(0, "turn screen with");
 	display_string(1, "<--the left side");
 	display_string(2, "<----towards you");
@@ -81,7 +75,7 @@ void startmessages(void){
 	display_update();
 	delay(1000);
 }
-
+//game over
 void gameover(void){
 	display_string(0, "GAME OVER");
 	display_string(1, "");
