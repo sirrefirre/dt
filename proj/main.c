@@ -4,8 +4,10 @@
 #include "mipslab.h"  /* Declatations for these labs */
 
 #define ENEMYSHIP 'H'
-#define SPACESHIP '>'
+#define SHIP '>'
 #define EMPTY ' '
+#define SHOT '-'
+#define ENEMYSHOT '~'
 
 volatile int* portE = (int *)0xbf886110;
 volatile int* trisE = (int *)0xbf886100;
@@ -15,13 +17,15 @@ volatile int* trisE = (int *)0xbf886100;
 int moved = 0;
 int timeoutcount = 0;
 int enemyupdate = 0;
-int enemydirection = 1;
-char string[4][16];
+int enemydirection = 1; //1=right      -1=left
+char string[4][16];		//play field
 
 
 void enemymovement(void);
 void dostuff(void);
 void move(void);
+void hit(void);
+void shoot(void);
 
 void init( void )
 {
@@ -118,7 +122,7 @@ int main(void) {
 		}
 	}
 	//place player
-	string[3][0] = SPACESHIP;
+	string[3][0] = SHIP;
 	//display starting field
 	display_string(0, string[0]);
 	display_string(1, string[1]);
@@ -218,7 +222,7 @@ void move(void){
 	//button 4 (left)
 	if(getbtns() == 4){
 		//if already at edge
-		if(string[0][0] == SPACESHIP){
+		if(string[0][0] == SHIP){
 		}else{
 			//move player
 			for(i = 0; i < 3; i++){
@@ -229,7 +233,7 @@ void move(void){
 	//button 3 (right)	
 	}else if(getbtns() == 2){
 		//if already at edge
-		if(string[3][0] == SPACESHIP){
+		if(string[3][0] == SHIP){
 		}else{
 			//move player
 			for(i = 3; i > 0; i--){
@@ -298,4 +302,12 @@ void enemymovement(void){
 			}
 		}
 	}
+}
+
+void hit(void){
+	
+}
+
+void shoot(void){
+	
 }
