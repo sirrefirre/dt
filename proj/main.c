@@ -55,25 +55,54 @@ void init( void )
 	T2CONSET = 0x8070;	//enable timer2 with 1:256
 	PR2 = 31250;		//set counter value
 
+	display_init();
+
   return;
 }
 
 int main(void) {
 
 	init(); //init board
-	display_init();
 	display_string(0, "Welcome to");
 	display_string(1, "mips invaders");
 	display_string(2, "this screen is");
 	display_string(3, "small :(");
 	display_update();
-	delay(5000);
-	//display_image(96, icon);
+	delay(1000);
+	display_string(0, "press button");
+	display_string(1, "2 to start");
+	display_string(2, "");
+	display_string(3, "");
+	display_update();
 	
-
+	while(!(getbtns() & 0x1)){}
+	
+	char string[4][16];
+	int i, j;
+	for(i = 0; i < 3; i++){
+		for(j = 14; j> 8; j--){
+			string[i][j] = 'H';
+		}
+	}
+	
+	//init enemy position
+	int f, g;
+	for(g = 0; g < 4; g++){
+		for(f = 0; f < 16; f++){
+			if(string[g][f] != 'H') string[g][f] = ' ';
+		}
+	}
+	string[3][0] = '>';
+	display_string(0, string[0]);
+	display_string(1, string[1]);
+	display_string(2, string[2]);
+	display_string(3, string[3]);
+	display_update();
+	
+	
 	while( 1 )
 	{
-	  labwork(); /* Do lab-specific things again and again */
+	  //dostuff(); /* Do lab-specific things again and again */
 	}
 	return 0;
 }
@@ -94,50 +123,48 @@ int getbtns(void){
 	return ret &= 0x7;
 }
 
-void labwork( void )
+void dostuff( void )
 {
 	//if timer done restart timer
 	if(IFS(0) & 0x100){
 		IFSCLR(0) = 0x100;
 		TMR2 = 0;
-	if(timeoutcount < 9){
-		timeoutcount++;
-		  /*
-		  int btns = getbtns();
-		  if(btns){
-			int sw = getsw();
-			//BTN4
-			if(btns & 0x4){
-				mytime &= 0x0fff;; // remove old digit
-				mytime |= (sw<<12); // set new digit
-			}
-			//BTN3
-			if(btns & 0x2){
-				mytime &= 0xf0ff;
-				mytime |= (sw<<8);
-			}
-			//BTN2
-			if(btns & 0x1){
-				mytime &= 0xff0f;
-				mytime |= (sw<<4);
-			}
-		  }*/
-	}else{
-		//print on screen once a second
-		timeoutcount = 0;
-		if(!flag++){
-			display_string( 0, "");
-			display_string( 1, "");
-			display_string( 2, "");
+		if(timeoutcount < 9){
+			timeoutcount++;
+			  /*
+			  int btns = getbtns();
+			  if(btns){
+				int sw = getsw();
+				//BTN4
+				if(btns & 0x4){
+					mytime &= 0x0fff;; // remove old digit
+					mytime |= (sw<<12); // set new digit
+				}
+				//BTN3
+				if(btns & 0x2){
+					mytime &= 0xf0ff;
+					mytime |= (sw<<8);
+				}
+				//BTN2
+				if(btns & 0x1){
+					mytime &= 0xff0f;
+					mytime |= (sw<<4);
+				}
+			  }*/
 		}else{
-			display_string(0, "top");
+			//print on screen once a second
+			timeoutcount = 0;
+			if(!flag++){
+				display_string( 0, "");
+				display_string( 1, "");
+				display_string( 2, "");
+			}else{
+				display_string(0, "top");
+			}
+			//time2string( textstring, mytime );
+			display_stringright( 3, "kek");
+			display_update();
+			//*portE += 1;
 		}
-		//time2string( textstring, mytime );
-		display_stringright( 3, "kek");
-		display_update();
-		//tick( &mytime );
-		//display_image(96, icon);
-		*portE += 1;
 	}
-}
 }
