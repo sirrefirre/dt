@@ -1,12 +1,20 @@
-#include <pic32mx.h>
+// made by Simon Westin and Yukki nakamura
 #include <stdint.h>   /* Declarations of uint_32 and the like */
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "mipslab.h"  /* Declatations for these labs */
 
-int main(void) {
+volatile int* portE = (int *)0xbf886110;
+volatile int* trisE = (int *)0xbf886100;
+int timeoutcount = 0;
+
+int flag = 0;
+
+void init( void )
+{
+	/**************** from lab3 main *****************/
 	/* Set up peripheral bus clock */
-        /* OSCCONbits.PBDIV = 1; */
-        OSCCONCLR = 0x100000; /* clear PBDIV bit 1 */
+    /* OSCCONbits.PBDIV = 1; */
+    OSCCONCLR = 0x100000; /* clear PBDIV bit 1 */
 	OSCCONSET = 0x080000; /* set PBDIV bit 0 */
 	
 	/* Set up output pins */
@@ -38,7 +46,21 @@ int main(void) {
 	SPI2CONSET = 0x20;
 	/* SPI2CON bit ON = 1; */
 	SPI2CONSET = 0x8000;
+	/********************************************************/
 	
+	
+	*trisE &= ~0xff;
+	*portE = 0;
+	TRISD |= 0xfe0;
+	T2CONSET = 0x8070;	//enable timer2 with 1:256
+	PR2 = 31250;		//set counter value
+
+  return;
+}
+
+int main(void) {
+
+	init(); //init board
 	display_init();
 	display_string(0, "Welcome to");
 	display_string(1, "mips invaders");
@@ -48,7 +70,6 @@ int main(void) {
 	delay(5000);
 	//display_image(96, icon);
 	
-	labinit(); /* Do any lab-specific initialization */
 
 	while( 1 )
 	{
@@ -59,23 +80,6 @@ int main(void) {
 /* Interrupt Service Routine */
 void user_isr( void )
 {
-  return;
-}
-/* Lab-specific initialization goes here */
-volatile int* portE = (int *)0xbf886110;
-volatile int* trisE = (int *)0xbf886100;
-int timeoutcount = 0;
-
-int flag = 0;
-
-void labinit( void )
-{
-	*trisE &= ~0xff;
-	*portE = 0;
-	TRISD |= 0xfe0;
-	T2CONSET = 0x8070;	//enable timer2 with 1:256
-	PR2 = 31250;		//set counter value
-
   return;
 }
 
@@ -89,6 +93,7 @@ int getbtns(void){
 	int ret = PORTD >> 5;
 	return ret &= 0x7;
 }
+
 void labwork( void )
 {
 	//if timer done restart timer
