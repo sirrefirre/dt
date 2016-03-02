@@ -82,6 +82,14 @@ void startmessages(void){
 	delay(1000);
 }
 
+void gameover(void){
+	display_string(0, "GAME OVER");
+	display_string(1, "");
+	display_string(2, " press button 2");
+	display_string(3, "  to try again");
+	display_update();
+}
+
 //get switch input
 int getsw(void){
 	int ret = PORTD >> 8;

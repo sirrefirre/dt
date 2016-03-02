@@ -9,8 +9,8 @@
 #define SHOT '-'
 #define ENEMYSHOT '~'
 
-
-int wall;
+int alive = 1;
+int wall = 0;
 int moved = 0;
 int timeoutcount = 0;
 int enemyupdate = 0;
@@ -21,47 +21,60 @@ char string[4][16];		//play field
 void enemymovement(void);
 void dostuff(void);
 void move(void);
-void hit(void);
+void hit(int);
 void shoot(void);
+void eshoot(void);
 
 
 
 int main(void) {
 
 	init(); //init board
-	startscreen(); //start screen
-	//wait for button 2 press (start)
-	while(!(getbtns() & 0x1)){}
-	startmessages(); //starting messages
+	while(1){
+		startscreen(); //start screen
+		//wait for button 2 press (start)
+		while(!(getbtns() & 0x1)){}
+		startmessages(); //starting messages
 
-	
-	int i, j;
-	//place enemies
-	for(i = 0; i < 3; i++){
-		for(j = 14; j> 8; j--){
-			string[i][j] = ENEMYSHIP;
+		
+		int i, j;
+		//place enemies
+		for(i = 0; i < 3; i++){
+			for(j = 14; j> 8; j--){
+				string[i][j] = ENEMYSHIP;
+			}
 		}
-	}
 
-	//make empty spaces ' ' (space)
-	for(i = 0; i < 4; i++){
-		for(j = 0; j < 16; j++){
-			if(string[i][j] != ENEMYSHIP) string[i][j] = EMPTY;
+		//make empty spaces ' ' (space)
+		for(i = 0; i < 4; i++){
+			for(j = 0; j < 16; j++){
+				if(string[i][j] != ENEMYSHIP) string[i][j] = EMPTY;
+			}
 		}
-	}
-	//place player
-	string[3][0] = SHIP;
-	//display starting field
-	display_string(0, string[0]);
-	display_string(1, string[1]);
-	display_string(2, string[2]);
-	display_string(3, string[3]);
-	display_update();
-	
-	
-	while( 1 )
-	{
-	  dostuff(); /* Do lab-specific things again and again */
+		//place player
+		string[3][0] = SHIP;
+		//display starting field
+		display_string(0, string[0]);
+		display_string(1, string[1]);
+		display_string(2, string[2]);
+		display_string(3, string[3]);
+		display_update();
+		
+		
+		while(alive)
+		{
+		  dostuff(); /* Do lab-specific things again and again */
+		}
+		gameover();
+		//wait for restart
+		while(!(getbtns() & 0x1)){}
+		//reset values
+		alive = 1;
+		wall = 0;
+		moved = 0;
+		timeoutcount = 0;
+		enemyupdate = 0;
+		enemydirection = 1;
 	}
 	return 0;
 }
@@ -218,9 +231,14 @@ void enemymovement(void){
 		}
 	}
 }
-
-void hit(void){
+void eshoot(void){
 	
+}
+//player hit, death detection
+void hit(int spos){
+	int ppos, i;
+	for(i = 0; i< 4; i++) if(string[0][i] == SHIP) ppos = i;
+	if(ppos == spos) alive = 0;//hit game over
 }
 
 void shoot(void){
