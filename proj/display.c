@@ -1,13 +1,12 @@
 /* original file mipslabfunc.c
    This file written 2015 by F Lundevall
    Some parts are original code written by Axel Isaksson
-
-   For copyright and licensing, see file COPYING */
+ */
    //modified by Simon Westin and Yukki Nakamura
 
 #include <stdint.h>   /* Declarations of uint_32 and the like */
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
-#include "include.h"  /* Declatations for these labs */
+#include "include.h"  /* Declarations for display */
 
 
 #define DISPLAY_CHANGE_TO_COMMAND_MODE (PORTFCLR = 0x10)
