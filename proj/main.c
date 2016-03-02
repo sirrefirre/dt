@@ -5,6 +5,8 @@
 
 volatile int* portE = (int *)0xbf886110;
 volatile int* trisE = (int *)0xbf886100;
+
+int moved = 0;
 int timeoutcount = 0;
 int enemyupdate = 0;
 int enemydirection = 1;
@@ -137,6 +139,10 @@ void dostuff( void )
 		TMR2 = 0;
 		if(timeoutcount < 9){
 			timeoutcount++;
+			if(getbtns() && !moved){
+				move();
+				moved = 1;
+			}
 			  /*
 			  int btns = getbtns();
 			  if(btns){
@@ -159,6 +165,10 @@ void dostuff( void )
 			  }*/
 		}else{
 			//print on screen once a second
+			if(getbtns() && !moved){
+				move();
+				moved = 1;
+			}
 			timeoutcount = 0;
 			if(enemyupdate == 1){
 				enemyupdate = 0;
@@ -167,18 +177,40 @@ void dostuff( void )
 				display_string(1, string[1]);
 				display_string(2, string[2]);
 				display_string(3, string[3]);
-				display_update();
-			}else{enemyupdate++;}
 
+			}else{
+				enemyupdate++;
+			}
+			display_update();
+			moved = 0;
 
 			*portE += 1;
 		}
 	}
 }
+
 int wall;
 
 void move(void){
-	
+	int i;
+	if(getbtns() == 4){
+		if(string[0][0] == '>'){
+		}else{
+			for(i = 0; i < 3; i++){
+			string[i][0] = string[i+1][0];
+			}
+			string[3][0] = ' ';
+		}
+		
+	}else if(getbtns() == 2){
+		if(string[3][0] == '>'){
+		}else{
+			for(i = 3; i > 0; i--){
+			string[i][0] = string[i-1][0];
+			}
+			string[0][0] = ' ';
+		}
+	} 
 }
 
 void enemymovement(void){
