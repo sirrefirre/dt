@@ -6,8 +6,15 @@
 volatile int* portE = (int *)0xbf886110;
 volatile int* trisE = (int *)0xbf886100;
 int timeoutcount = 0;
+int enemyupdate = 0;
+int enemydirection = 1;
+char string[4][16];
 
 int flag = 0;
+
+void enemymovement(void);
+void dostuff(void);
+void move(void);
 
 void init( void )
 {
@@ -77,7 +84,6 @@ int main(void) {
 	
 	while(!(getbtns() & 0x1)){}
 	
-	char string[4][16];
 	int i, j;
 	for(i = 0; i < 3; i++){
 		for(j = 14; j> 8; j--){
@@ -102,7 +108,7 @@ int main(void) {
 	
 	while( 1 )
 	{
-	  //dostuff(); /* Do lab-specific things again and again */
+	  dostuff(); /* Do lab-specific things again and again */
 	}
 	return 0;
 }
@@ -154,17 +160,78 @@ void dostuff( void )
 		}else{
 			//print on screen once a second
 			timeoutcount = 0;
-			if(!flag++){
-				display_string( 0, "");
-				display_string( 1, "");
-				display_string( 2, "");
-			}else{
-				display_string(0, "top");
-			}
-			//time2string( textstring, mytime );
-			display_stringright( 3, "kek");
-			display_update();
-			//*portE += 1;
+			if(enemyupdate == 1){
+				enemyupdate = 0;
+				enemymovement();
+				display_string(0, string[0]);
+				display_string(1, string[1]);
+				display_string(2, string[2]);
+				display_string(3, string[3]);
+				display_update();
+			}else{enemyupdate++;}
+
+
+			*portE += 1;
 		}
 	}
 }
+int wall;
+
+void move(void){
+	
+}
+
+void enemymovement(void){
+
+			int qw, we, i, j;
+	if(enemydirection == 1){
+		for(qw = 14; qw > 0; qw--){
+			if(string[3][qw] == 'H'){
+				wall = 1;
+			}
+		}
+		if(wall){
+			for(i = 1; i < 15; i++){
+				for(j = 0; j < 4; j++){
+					string[j][i] = string[j][i+1];
+				}
+			}
+			wall = 0;
+			enemydirection = -1;
+		}else{
+			for(i = 1; i < 15; i++){
+				for(j = 3; j > 0; j--){
+					string[j][i] = string[j-1][i];
+				}
+				string[0][i] = ' ';
+			}
+		}
+		//left
+	}else{
+		for(qw = 14; qw > 0; qw--){
+			if(string[0][qw] == 'H'){
+				wall = 1;
+			}
+		}
+		if(wall){
+			for(i = 1; i < 15; i++){
+				for(j = 0; j < 4; j++){
+					string[j][i] = string[j][i+1];
+					
+				}
+			}
+			wall = 0;
+			enemydirection = 1;
+		}else{
+			for(i = 1; i < 15; i++){
+				for(j = 0; j < 4; j++){
+					string[j][i] = string[j+1][i];
+				}
+				string[3][i] = ' ';
+			}
+		}
+	}
+}
+
+
+
