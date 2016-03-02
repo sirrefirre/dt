@@ -1,38 +1,72 @@
-/* mipslabwork.c
-
-   This file written 2015 by F Lundevall
-
-   This file should be changed by YOU! So add something here:
-
-   This file modified 2015-12-24 by Ture Teknolog 
-
-   Latest update 2015-08-28 by F Lundevall
-
-   For copyright and licensing, see file COPYING */
-
-      //modified by Simon Westin and Yukki Nakamura
-
+#include <pic32mx.h>
 #include <stdint.h>   /* Declarations of uint_32 and the like */
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "mipslab.h"  /* Declatations for these labs */
 
+int main(void) {
+	/* Set up peripheral bus clock */
+        /* OSCCONbits.PBDIV = 1; */
+        OSCCONCLR = 0x100000; /* clear PBDIV bit 1 */
+	OSCCONSET = 0x080000; /* set PBDIV bit 0 */
+	
+	/* Set up output pins */
+	AD1PCFG = 0xFFFF;
+	ODCE = 0x0;
+	TRISECLR = 0xFF;
+	PORTE = 0x0;
+	
+	/* Output pins for display signals */
+	PORTF = 0xFFFF;
+	PORTG = (1 << 9);
+	ODCF = 0x0;
+	ODCG = 0x0;
+	TRISFCLR = 0x70;
+	TRISGCLR = 0x200;
+	
+	/* Set up input pins */
+	TRISDSET = (1 << 8);
+	TRISFSET = (1 << 1);
+	
+	/* Set up SPI as master */
+	SPI2CON = 0;
+	SPI2BRG = 4;
+	/* SPI2STAT bit SPIROV = 0; */
+	SPI2STATCLR = 0x40;
+	/* SPI2CON bit CKP = 1; */
+        SPI2CONSET = 0x40;
+	/* SPI2CON bit MSTEN = 1; */
+	SPI2CONSET = 0x20;
+	/* SPI2CON bit ON = 1; */
+	SPI2CONSET = 0x8000;
+	
+	display_init();
+	display_string(0, "Welcome to");
+	display_string(1, "mips invaders");
+	display_string(2, "this screen is");
+	display_string(3, "small :(");
+	display_update();
+	delay(5000);
+	//display_image(96, icon);
+	
+	labinit(); /* Do any lab-specific initialization */
 
-int mytime = 0x5900;
-int timeoutcount = 0;
-int flag = 0;
-
-
-char textstring[] = "text, more text, and even more text!";
-
+	while( 1 )
+	{
+	  labwork(); /* Do lab-specific things again and again */
+	}
+	return 0;
+}
 /* Interrupt Service Routine */
 void user_isr( void )
 {
   return;
 }
-
 /* Lab-specific initialization goes here */
 volatile int* portE = (int *)0xbf886110;
 volatile int* trisE = (int *)0xbf886100;
+int timeoutcount = 0;
+
+int flag = 0;
 
 void labinit( void )
 {
@@ -45,7 +79,16 @@ void labinit( void )
   return;
 }
 
-/* This function is called repetitively from the main program */
+
+int getsw(void){
+	int ret = PORTD >> 8;
+	return ret &= 0xf;
+}
+
+int getbtns(void){
+	int ret = PORTD >> 5;
+	return ret &= 0x7;
+}
 void labwork( void )
 {
 	//if timer done restart timer
