@@ -9,6 +9,7 @@
 #define SHOT '-'
 #define ENEMYSHOT '~'
 
+int fired = 0;
 int alive = 1;
 int wall = 0;
 int moved = 0;
@@ -23,7 +24,9 @@ void dostuff(void);
 void move(void);
 void hit(int);
 void shoot(void);
-void eshoot(void);
+void enemyshoot(void);
+int enemytravel(int);
+int travel(int);
 
 
 
@@ -94,8 +97,12 @@ void dostuff( void )
 			timeoutcount++;
 			//if button pressed and not already moved
 			if(getbtns() && !moved){
+				
 				move();
 				moved = 1;
+			}
+			if((getbtns() & 1) && !fired){
+				fired = 1;
 			}
 			  /*
 			  int btns = getbtns();
@@ -123,6 +130,9 @@ void dostuff( void )
 				move();
 				moved = 1;
 			}
+			if((getbtns() & 1) && !fired){
+				fired = 1;
+			}
 			timeoutcount = 0;
 			//update enemy movement every other second
 			if(enemyupdate == 1){
@@ -136,9 +146,11 @@ void dostuff( void )
 			}else{
 				enemyupdate++;
 			}
+			travel();
 			//print on screen once a second
 			display_update();
 			moved = 0;
+			fired = 0;
 			//*portE += 1;
 		}
 	}
@@ -231,16 +243,58 @@ void enemymovement(void){
 		}
 	}
 }
-void eshoot(void){
+void enemyshoot(void){
 	
 }
+
 //player hit, death detection
 void hit(int spos){
-	int ppos, i;
-	for(i = 0; i< 4; i++) if(string[0][i] == SHIP) ppos = i;
+	int ppos;
+	for(ppos = 0; ppos< 4; ppos++) if(string[0][ppos] == SHIP){
+		break;
+	}
 	if(ppos == spos) alive = 0;//hit game over
 }
 
-void shoot(void){
-	
+//enemy shot travel
+int enemytravel(int pos){
+	int i;
+	for(i = 1; i < 13; i++){
+	if(string[pos][i+1] == ENEMYSHIP ){
+		string[pos][i] = EMPTY;
+	break;
+	}
+		string[pos][i] = string[pos][i+1];
+	}
+	return pos;
 }
+//player shot travel
+void travel(void){
+	int i, j;
+	for(pos = 0; pos < 4; pos++){
+		for(i = 1; i < 16; i++){
+			if(string[pos][i-1] == ENEMYSHIP ) break;
+			if(string[pos][i-1] == ENEMYSHOT ){
+				string[pos][i] = EMPTY;
+				string[pos][i-1] = EMPTY;
+				break;
+			}
+		}
+		for(i; i > 1; i--){
+			string[pos][i] = string[pos][i-1];
+		}
+		string[pos][1] = EMPTY;
+	}
+}
+
+void shoot(void){
+	int ppos;
+	for(ppos = 0; ppos< 4; ppos++) if(string[0][ppos] == SHIP){
+		break;
+	}
+	string[ppos][1] = SHOT;
+}
+
+
+
+
