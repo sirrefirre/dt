@@ -8,11 +8,11 @@
 #define EMPTY ' '
 #define SHOT '-'
 #define ENEMYSHOT '~'
-
+int firerate = 0;
+int holdleft = 0, holdright = 0;
 int fired = 0;
 int alive = 1;
 int wall = 0;
-int moved = 0;
 int timeoutcount = 0;
 int enemyupdate = 0;
 int enemydirection = 1; //1=right      -1=left
@@ -26,7 +26,8 @@ void hit(int);
 void shoot(void);
 void enemyshoot(void);
 int enemytravel(int);
-int travel(int);
+void travel(void);
+void displayprint(void);
 
 
 
@@ -57,12 +58,7 @@ int main(void) {
 		//place player
 		string[3][0] = SHIP;
 		//display starting field
-		display_string(0, string[0]);
-		display_string(1, string[1]);
-		display_string(2, string[2]);
-		display_string(3, string[3]);
-		display_update();
-		
+		displayprint();
 		
 		while(alive)
 		{
@@ -74,7 +70,6 @@ int main(void) {
 		//reset values
 		alive = 1;
 		wall = 0;
-		moved = 0;
 		timeoutcount = 0;
 		enemyupdate = 0;
 		enemydirection = 1;
@@ -95,63 +90,31 @@ void dostuff( void )
 		TMR2 = 0;
 		if(timeoutcount < 9){
 			timeoutcount++;
+				travel();
+				if((getbtns() & 4) || (getbtns() & 2)) move();
+				displayprint();
+
 			//if button pressed and not already moved
-			if(getbtns() && !moved){
-				
-				move();
-				moved = 1;
-			}
-			if((getbtns() & 1) && !fired){
-				fired = 1;
-			}
-			  /*
-			  int btns = getbtns();
-			  if(btns){
-				int sw = getsw();
-				//BTN4
-				if(btns & 0x4){
-					mytime &= 0x0fff;; // remove old digit
-					mytime |= (sw<<12); // set new digit
-				}
-				//BTN3
-				if(btns & 0x2){
-					mytime &= 0xf0ff;
-					mytime |= (sw<<8);
-				}
-				//BTN2
-				if(btns & 0x1){
-					mytime &= 0xff0f;
-					mytime |= (sw<<4);
-				}
-			  }*/
+						
+			if((getbtns() & 1) && !fired) fired = 1;
 		}else{
 			//if button pressed and not already moved
-			if(getbtns() && !moved){
-				move();
-				moved = 1;
-			}
-			if((getbtns() & 1) && !fired){
-				fired = 1;
-			}
+			
+			if((getbtns() & 1) && !fired) fired = 1;
 			timeoutcount = 0;
 			//update enemy movement every other second
 			if(enemyupdate == 1){
 				enemyupdate = 0;
 				enemymovement();
-				display_string(0, string[0]);
-				display_string(1, string[1]);
-				display_string(2, string[2]);
-				display_string(3, string[3]);
-
 			}else{
 				enemyupdate++;
 			}
 			travel();
+			if(fired) shoot();
+			if((getbtns() & 4) || (getbtns() & 2)) move();
 			//print on screen once a second
-			display_update();
-			moved = 0;
+			displayprint();
 			fired = 0;
-			//*portE += 1;
 		}
 	}
 }
@@ -161,7 +124,8 @@ void dostuff( void )
 void move(void){
 	int i;
 	//button 4 (left)
-	if(getbtns() == 4){
+	
+	if(getbtns() & 4){
 		//if already at edge
 		if(string[0][0] == SHIP){
 		}else{
@@ -172,7 +136,8 @@ void move(void){
 			string[3][0] = EMPTY;
 		}
 	//button 3 (right)	
-	}else if(getbtns() == 2){
+	}else if(getbtns() & 2){
+		holdright = 1;
 		//if already at edge
 		if(string[3][0] == SHIP){
 		}else{
@@ -199,6 +164,7 @@ void enemymovement(void){
 		if(wall){
 			for(i = 1; i < 15; i++){
 				for(j = 0; j < 4; j++){
+					if((string[j][i] == SHOT) || (string[j][i-1] == SHOT)) continue;					
 					string[j][i] = string[j][i+1];
 				}
 			}
@@ -208,7 +174,13 @@ void enemymovement(void){
 			//move all enemies right
 			for(i = 1; i < 15; i++){
 				for(j = 3; j > 0; j--){
-					string[j][i] = string[j-1][i];
+					if(string[j-1][i] == SHOT){
+						string[j][i] = EMPTY;
+					} else if((string[j][i] == SHOT) && (string[j-1][i] == ENEMYSHIP)){
+						string[j][i] = EMPTY;
+					}else{
+						string[j][i] = string[j-1][i];
+					}
 				}
 				string[0][i] = EMPTY;
 			}
@@ -225,6 +197,7 @@ void enemymovement(void){
 		if(wall){
 			for(i = 1; i < 15; i++){
 				for(j = 0; j < 4; j++){
+					if((string[j][i] == SHOT) || (string[j][i-1] == SHOT)) continue;
 					string[j][i] = string[j][i+1];
 					
 				}
@@ -236,7 +209,14 @@ void enemymovement(void){
 			//move all enemies left
 			for(i = 1; i < 15; i++){
 				for(j = 0; j < 4; j++){
-					string[j][i] = string[j+1][i];
+					
+					if(string[j+1][i] == SHOT){
+						string[j][i] = EMPTY;
+					} else if((string[j][i] == SHOT) && (string[j+1][i] == ENEMYSHIP)){
+						string[j][i] = EMPTY;
+					}else{
+						string[j][i] = string[j+1][i];
+					}
 				}
 				string[3][i] = EMPTY;
 			}
@@ -270,18 +250,21 @@ int enemytravel(int pos){
 }
 //player shot travel
 void travel(void){
-	int i, j;
+	int i, pos;
 	for(pos = 0; pos < 4; pos++){
-		for(i = 1; i < 16; i++){
-			if(string[pos][i-1] == ENEMYSHIP ) break;
-			if(string[pos][i-1] == ENEMYSHOT ){
+		for(i = 15; i > 1; i--){
+			if((string[pos][i] == ENEMYSHIP) || (string[pos][i-1] == ENEMYSHIP)) continue;
+			
+			if((string[pos][i] == SHOT) && (string[pos][i+1] == ENEMYSHIP)){
 				string[pos][i] = EMPTY;
-				string[pos][i-1] = EMPTY;
-				break;
+				string[pos][i+1] = EMPTY;
 			}
-		}
-		for(i; i > 1; i--){
-			string[pos][i] = string[pos][i-1];
+			if((string[pos][i-1] == ENEMYSHOT) && (string[pos][i-2] == SHOT)){
+				string[pos][i-1] = EMPTY;
+				string[pos][i-2] = EMPTY;
+				break;
+			}	
+			string[pos][i] = string[pos][i-1];	
 		}
 		string[pos][1] = EMPTY;
 	}
@@ -289,12 +272,18 @@ void travel(void){
 
 void shoot(void){
 	int ppos;
-	for(ppos = 0; ppos< 4; ppos++) if(string[0][ppos] == SHIP){
+	for(ppos = 0; ppos< 4; ppos++) if(string[ppos][0] == SHIP){
 		break;
 	}
 	string[ppos][1] = SHOT;
 }
 
-
+void displayprint(void){
+	display_string(0, string[0]);
+	display_string(1, string[1]);
+	display_string(2, string[2]);
+	display_string(3, string[3]);
+	display_update();
+}
 
 
