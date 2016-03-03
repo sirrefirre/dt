@@ -164,7 +164,7 @@ void enemymovement(void){
 		if(wall){
 			for(i = 1; i < 15; i++){
 				for(j = 0; j < 4; j++){
-					if((string[j][i] == SHOT) || (string[j][i-1] == SHOT)) continue;					
+					if((string[j][i] == SHOT) || (string[j][i+1] == SHOT)) continue;					
 					string[j][i] = string[j][i+1];
 				}
 			}
@@ -174,10 +174,13 @@ void enemymovement(void){
 			//move all enemies right
 			for(i = 1; i < 15; i++){
 				for(j = 3; j > 0; j--){
+					
 					if(string[j-1][i] == SHOT){
 						string[j][i] = EMPTY;
 					} else if((string[j][i] == SHOT) && (string[j-1][i] == ENEMYSHIP)){
 						string[j][i] = EMPTY;
+					}else if(string[j][i] == SHOT){
+						continue;
 					}else{
 						string[j][i] = string[j-1][i];
 					}
@@ -197,7 +200,7 @@ void enemymovement(void){
 		if(wall){
 			for(i = 1; i < 15; i++){
 				for(j = 0; j < 4; j++){
-					if((string[j][i] == SHOT) || (string[j][i-1] == SHOT)) continue;
+					if((string[j][i] == SHOT) || (string[j][i+1] == SHOT)) continue;
 					string[j][i] = string[j][i+1];
 					
 				}
@@ -214,6 +217,8 @@ void enemymovement(void){
 						string[j][i] = EMPTY;
 					} else if((string[j][i] == SHOT) && (string[j+1][i] == ENEMYSHIP)){
 						string[j][i] = EMPTY;
+					}else if(string[j][i] == SHOT){
+						continue;
 					}else{
 						string[j][i] = string[j+1][i];
 					}
