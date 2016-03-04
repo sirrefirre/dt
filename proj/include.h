@@ -3,6 +3,7 @@ void init( void );
 void startscreen(void);
 void startmessages(void);
 void gameover(void);
+void victory(void);
 /* Declare bitmap array containing font */
 extern const uint8_t const font[128*8];
 extern char textbuffer[4][16];

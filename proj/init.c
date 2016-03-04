@@ -84,6 +84,14 @@ void gameover(void){
 	display_update();
 }
 
+void victory(void){
+	display_string(0, "    VICTORY!");
+	display_string(1, "");
+	display_string(2, " press button 2");
+	display_string(3, " to play again");
+	display_update();
+}
+
 //get switch input
 int getsw(void){
 	int ret = PORTD >> 8;
