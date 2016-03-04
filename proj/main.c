@@ -302,6 +302,8 @@ void enemytravel(void){
 		if(string[pos][1] == ENEMYSHOT) hit();
 		for(i = 1; i < 13; i++){
 			if((string[pos][i] == SHOT) || (string[pos][i+1] == SHOT)){
+			}else if(string[pos][i] == ENEMYSHIP){
+				break;
 			}else if(string[pos][i+1] == ENEMYSHIP){
 				if(string[pos][i] == ENEMYSHOT) string[pos][i] = EMPTY;
 				break;
