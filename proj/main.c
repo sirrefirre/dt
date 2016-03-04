@@ -42,7 +42,7 @@ int main(void) {
 		int i, j;
 		//place enemies
 		for(i = 0; i < 3; i++){
-			for(j = 14; j> 8; j--){
+			for(j = 14; j > 8; j--){
 				string[i][j] = ENEMYSHIP;
 			}
 		}
@@ -178,6 +178,12 @@ void enemymovement(void){
 				for(j = 0; j < 4; j++){
 					if((string[j][i] == SHOT) || (string[j][i+1] == SHOT)) continue;
 					if((string[j][i] == ENEMYSHOT) || (string[j][i+1] == ENEMYSHOT)) continue;	
+					if((string[j][i] == ENEMYSHIP) && (string[j][i-1] == SHOT)){
+						string[j][i] = EMPTY;
+						string[j][i-1] = EMPTY;
+						enemies--;
+						continue;
+					}
 					string[j][i] = string[j][i+1];
 					if((string[j][i] == ENEMYSHIP) && (i == 1)){
 						alive = 0;
@@ -222,6 +228,11 @@ void enemymovement(void){
 				for(j = 0; j < 4; j++){
 					if((string[j][i] == SHOT) || (string[j][i+1] == SHOT)) continue;
 					if((string[j][i] == ENEMYSHOT) || (string[j][i+1] == ENEMYSHOT)) continue;	
+					if((string[j][i] == ENEMYSHIP) && (string[j][i-1] == SHOT)){
+						string[j][i] = EMPTY;
+						string[j][i-1] = EMPTY;
+						continue;
+					}
 					string[j][i] = string[j][i+1];
 					if((string[j][i] == ENEMYSHIP) && (i == 1)) alive = 0;
 
@@ -290,12 +301,16 @@ void enemytravel(void){
 	for(pos = 0; pos < 4; pos++){
 		if(string[pos][1] == ENEMYSHOT) hit();
 		for(i = 1; i < 13; i++){
-			if((string[pos][i] == SHOT) || (string[pos][i+1] == SHOT)) continue;
-			if((string[pos][i+1] == ENEMYSHIP) && (string[pos][i] != ENEMYSHIP)){
-				string[pos][i] = EMPTY;
+			if((string[pos][i] == SHOT) || (string[pos][i+1] == SHOT)){
+			}else if(string[pos][i+1] == ENEMYSHIP){
+				if(string[pos][i] == ENEMYSHOT) string[pos][i] = EMPTY;
 				break;
+			} else if((string[pos][i] == ENEMYSHOT) && (string[pos][i-1] == SHOT)){
+				string[pos][i] = EMPTY;
+				string[pos][i-1] = EMPTY;
+			} else {
+				string[pos][i] = string[pos][i+1];
 			}
-			string[pos][i] = string[pos][i+1];
 		}
 	}
 }
@@ -304,15 +319,13 @@ void travel(void){
 	int i, pos;
 	for(pos = 0; pos < 4; pos++){
 		for(i = 15; i > 1; i--){
-			if((string[pos][i] == SHOT) && (string[pos][i-1] == ENEMYSHIP)) string[pos][i] = EMPTY;
-			if((string[pos][i] == ENEMYSHIP) || (string[pos][i-1] == ENEMYSHIP)){
-				continue;
+			if((string[pos][i] == SHOT) && (string[pos][i-1] == ENEMYSHIP)){
+				string[pos][i] = EMPTY;
+			}else if((string[pos][i] == ENEMYSHIP) || (string[pos][i-1] == ENEMYSHIP)){
 			}else if((string[pos][i] == ENEMYSHOT) && (string[pos][i-1] == SHOT)){
 				string[pos][i] = EMPTY;
 				string[pos][i-1] = EMPTY;
-				break;
 			}else if((string[pos][i] == ENEMYSHOT) || (string[pos][i-1] == ENEMYSHOT)){
-				continue;
 			}else if((string[pos][i] == SHOT) && (string[pos][i+1] == ENEMYSHIP)){
 				string[pos][i] = EMPTY;
 				string[pos][i+1] = EMPTY;
