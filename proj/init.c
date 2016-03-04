@@ -77,7 +77,7 @@ void startmessages(void){
 }
 //game over
 void gameover(void){
-	display_string(0, "GAME OVER");
+	display_string(0, "   GAME OVER!");
 	display_string(1, "");
 	display_string(2, " press button 2");
 	display_string(3, "  to try again");

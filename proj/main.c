@@ -8,8 +8,6 @@
 #define EMPTY ' '
 #define SHOT '-'
 #define ENEMYSHOT '~'
-int firerate = 0;
-int holdleft = 0, holdright = 0;
 int fired = 0;
 int alive = 1;
 int wall = 0;
@@ -36,6 +34,7 @@ int main(void) {
 	init(); //init board
 	while(1){
 		startscreen(); //start screen
+		delay(1000);
 		//wait for button 2 press (start)
 		while(!(getbtns() & 0x1)){}
 		startmessages(); //starting messages
@@ -62,12 +61,13 @@ int main(void) {
 		
 		while(alive)
 		{
-		  dostuff(); /* Do lab-specific things again and again */
+		  dostuff(); /* run game */
 		}
 		gameover();
 		//wait for restart
 		while(!(getbtns() & 0x1)){}
 		//reset values
+		fired = 0;
 		alive = 1;
 		wall = 0;
 		timeoutcount = 0;
@@ -82,8 +82,7 @@ void user_isr( void )
   return;
 }
 
-void dostuff( void )
-{
+void dostuff( void ){
 	//if timer done restart timer
 	if(IFS(0) & 0x100){
 		IFSCLR(0) = 0x100;
@@ -140,7 +139,6 @@ void move(void){
 		}
 	//button 3 (right)	
 	}else if(getbtns() & 2){
-		holdright = 1;
 		//if already at edge
 		if(string[3][0] == SHIP){
 		}else{
@@ -170,6 +168,10 @@ void enemymovement(void){
 					if((string[j][i] == SHOT) || (string[j][i+1] == SHOT)) continue;
 					if((string[j][i] == ENEMYSHOT) || (string[j][i+1] == ENEMYSHOT)) continue;	
 					string[j][i] = string[j][i+1];
+					if((string[j][i] == ENEMYSHIP) && (i == 1)){
+						alive = 0;
+						return;
+					}
 				}
 			}
 			wall = 0;
@@ -209,7 +211,8 @@ void enemymovement(void){
 					if((string[j][i] == SHOT) || (string[j][i+1] == SHOT)) continue;
 					if((string[j][i] == ENEMYSHOT) || (string[j][i+1] == ENEMYSHOT)) continue;	
 					string[j][i] = string[j][i+1];
-					
+					if((string[j][i] == ENEMYSHIP) && (i == 1)) alive = 0;
+
 				}
 			}
 			wall = 0;
@@ -254,19 +257,15 @@ void enemyshoot(void){
 
 void shoot(void){
 	int ppos;
-	for(ppos = 0; ppos< 4; ppos++) if(string[ppos][0] == SHIP){
-		break;
-	}
+	for(ppos = 0; ppos< 4; ppos++) if(string[ppos][0] == SHIP) break;
 	string[ppos][1] = SHOT;
 }
 
 //player hit, death detection
 void hit(void){
-	int ppos, spos;
-	for(ppos = 0; ppos < 4; ppos++) if(string[0][ppos] == SHIP){
-		break;
-	}
-	for(spos = 0; spos < 4; spos++) if((string[1][spos] == ENEMYSHOT) && (ppos == spos)) alive = 0;
+	int ppos;
+	for(ppos = 0; ppos < 4; ppos++) if(string[ppos][0] == SHIP) break;
+	if(string[ppos][1] == ENEMYSHOT) alive = 0;
 	//hit game over
 }
 
@@ -302,7 +301,7 @@ void travel(void){
 			}	
 			string[pos][i] = string[pos][i-1];	
 		}
-		string[pos][1] = EMPTY;
+		if(string[pos][1] == SHOT) string[pos][1] = EMPTY;
 	}
 }
 
