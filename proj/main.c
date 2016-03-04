@@ -18,14 +18,14 @@ int enemyupdate = 0;
 int enemydirection = 1; //1=right      -1=left
 char string[4][16];		//play field
 
-
+int rand(void);
 void enemymovement(void);
 void dostuff(void);
 void move(void);
 void hit(int);
 void shoot(void);
 void enemyshoot(void);
-int enemytravel(int);
+void enemytravel(void);
 void travel(void);
 void displayprint(void);
 
@@ -110,6 +110,8 @@ void dostuff( void )
 				enemyupdate++;
 			}
 			travel();
+			enemytravel();
+			enemyshoot();
 			if(fired) shoot();
 			if((getbtns() & 4) || (getbtns() & 2)) move();
 			//print on screen once a second
@@ -229,7 +231,26 @@ void enemymovement(void){
 	}
 }
 void enemyshoot(void){
-	
+	int i, j;
+	for(j = 0; j < 4; j++){
+		for(i = 1; i < 14; i++){
+			if(string[j][i] == ENEMYSHIP){
+				if(rand()%10>7){
+					string[j][i-1] = ENEMYSHOT;
+					return;
+				}
+				break;
+			}
+		}
+	}
+}
+
+void shoot(void){
+	int ppos;
+	for(ppos = 0; ppos< 4; ppos++) if(string[ppos][0] == SHIP){
+		break;
+	}
+	string[ppos][1] = SHOT;
 }
 
 //player hit, death detection
@@ -242,16 +263,17 @@ void hit(int spos){
 }
 
 //enemy shot travel
-int enemytravel(int pos){
-	int i;
-	for(i = 1; i < 13; i++){
-	if(string[pos][i+1] == ENEMYSHIP ){
-		string[pos][i] = EMPTY;
-	break;
+void enemytravel(void){
+	int i, pos;
+	for(pos = 0; pos < 4; pos++){
+		for(i = 1; i < 13; i++){
+		if(string[pos][i+1] == ENEMYSHIP ){
+			string[pos][i] = EMPTY;
+		break;
+		}
+			string[pos][i] = string[pos][i+1];
+		}
 	}
-		string[pos][i] = string[pos][i+1];
-	}
-	return pos;
 }
 //player shot travel
 void travel(void){
@@ -259,7 +281,7 @@ void travel(void){
 	for(pos = 0; pos < 4; pos++){
 		for(i = 15; i > 1; i--){
 			if((string[pos][i] == ENEMYSHIP) || (string[pos][i-1] == ENEMYSHIP)) continue;
-			
+			if((string[pos][i] == ENEMYSHOT) || (string[pos][i-1] == ENEMYSHOT)) continue;
 			if((string[pos][i] == SHOT) && (string[pos][i+1] == ENEMYSHIP)){
 				string[pos][i] = EMPTY;
 				string[pos][i+1] = EMPTY;
@@ -275,13 +297,7 @@ void travel(void){
 	}
 }
 
-void shoot(void){
-	int ppos;
-	for(ppos = 0; ppos< 4; ppos++) if(string[ppos][0] == SHIP){
-		break;
-	}
-	string[ppos][1] = SHOT;
-}
+
 
 void displayprint(void){
 	display_string(0, string[0]);
@@ -291,4 +307,9 @@ void displayprint(void){
 	display_update();
 }
 
-
+unsigned long int next = 1;
+/* rand: return pseudo-random integer on 0..32767 */
+int rand(void){
+next = next * 1103515245 + 12345;
+return (unsigned int)(next/65536) % 32768;
+}
