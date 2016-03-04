@@ -74,6 +74,7 @@ int main(void) {
 		for(i = 0; i < 4; i++){
 			for(j = 0; j < 16; j++) string[i][j] = EMPTY;
 		}
+		enemies = 18;
 		fired = 0;
 		alive = 1;
 		wall = 0;
@@ -303,6 +304,7 @@ void travel(void){
 	int i, pos;
 	for(pos = 0; pos < 4; pos++){
 		for(i = 15; i > 1; i--){
+			if((string[pos][i] == SHOT) && (string[pos][i-1] == ENEMYSHIP)) string[pos][i] = EMPTY;
 			if((string[pos][i] == ENEMYSHIP) || (string[pos][i-1] == ENEMYSHIP)){
 				continue;
 			}else if((string[pos][i] == ENEMYSHOT) && (string[pos][i-1] == SHOT)){
