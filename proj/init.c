@@ -2,7 +2,7 @@
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "include.h"  /* Declatations for these labs */
 
-#define ENEMYSHIP 'H'
+#define ENEMYSHIP 'B'
 #define SHIP '>'
 #define EMPTY ' '
 #define SHOT '-'
@@ -113,7 +113,7 @@ void startfield(void){
 	int i, j;
 	//place enemies
 	for(i = 0; i < 3; i++){
-		for(j = 14; j > 8; j--){
+		for(j = 14; j > 6; j--){
 			string[i][j] = ENEMYSHIP;
 		}
 	}

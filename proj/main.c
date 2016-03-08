@@ -3,13 +3,13 @@
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "include.h"
 
-#define ENEMYSHIP 'H'
+#define ENEMYSHIP 'B'
 #define SHIP '>'
 #define EMPTY ' '
 #define SHOT '-'
 #define ENEMYSHOT '('
 
-int enemies = 18;		//number of enemies left
+int enemies = 24;		//number of enemies left
 int fired = 0;			//fire rate
 int alive = 1;			//play condition
 int wall = 0;			//if wall
@@ -71,6 +71,7 @@ void game( void ){
 	if(IFS(0) & 0x100){
 		IFSCLR(0) = 0x100;
 		TMR2 = 0;
+		while(getsw()){}	//pause
 		if(timeoutcount < 9){
 			timeoutcount++;
 				travel();			//move player shot(s)
@@ -353,7 +354,7 @@ void reset(void){
 		for(i = 0; i < 4; i++){
 			for(j = 0; j < 16; j++) string[i][j] = EMPTY;
 		}
-		enemies = 18;
+		enemies = 24;
 		fired = 0;
 		alive = 1;
 		wall = 0;
