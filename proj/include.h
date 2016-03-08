@@ -4,13 +4,14 @@ void startscreen(void);
 void startmessages(void);
 void gameover(void);
 void victory(void);
+void startfield(void);
 /* Declare bitmap array containing font */
+extern char string[4][16];
 extern const uint8_t const font[128*8];
 extern char textbuffer[4][16];
 /* Written as part of i/o lab: getbtns, getsw */
 int getbtns(void);
 int getsw(void);
-
 void display_init(void);
 void display_string(int line, char *s);
 void display_stringright(int line, char *s);

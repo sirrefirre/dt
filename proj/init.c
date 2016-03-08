@@ -2,6 +2,12 @@
 #include <pic32mx.h>  /* Declarations of system-specific addresses etc */
 #include "include.h"  /* Declatations for these labs */
 
+#define ENEMYSHIP 'H'
+#define SHIP '>'
+#define EMPTY ' '
+#define SHOT '-'
+#define ENEMYSHOT '('
+
 void init( void ){
 	/**************** from lab3 main *****************/
 	/* Set up peripheral bus clock */
@@ -75,7 +81,7 @@ void startmessages(void){
 	display_update();
 	delay(1000);
 }
-//game over
+//game over messages
 void gameover(void){
 	display_string(0, "   GAME OVER!");
 	display_string(1, "");
@@ -83,7 +89,7 @@ void gameover(void){
 	display_string(3, "  to try again");
 	display_update();
 }
-
+//victory messages
 void victory(void){
 	display_string(0, "    VICTORY!");
 	display_string(1, "");
@@ -102,7 +108,26 @@ int getbtns(void){
 	int ret = PORTD >> 5;
 	return ret &= 0x7;
 }
-
+//starting field
+void startfield(void){
+	int i, j;
+	//place enemies
+	for(i = 0; i < 3; i++){
+		for(j = 14; j > 8; j--){
+			string[i][j] = ENEMYSHIP;
+		}
+	}
+	//make empty spaces ' ' (space)
+	for(i = 0; i < 4; i++){
+		for(j = 0; j < 16; j++){
+			if(string[i][j] != ENEMYSHIP) string[i][j] = EMPTY;
+		}
+	}
+	//place player
+	string[3][0] = SHIP;
+	//display starting field
+	displayprint();
+}
 /***************from mipslabdata*****************************************************
 font */
 char textbuffer[4][16];
